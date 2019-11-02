@@ -34,7 +34,6 @@
             this.accordionControl1 = new DevExpress.XtraBars.Navigation.AccordionControl();
             this.accordionContentContainer1 = new DevExpress.XtraBars.Navigation.AccordionContentContainer();
             this.propertyGridControl1 = new DevExpress.XtraVerticalGrid.PropertyGridControl();
-            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.tcSerialPort = new DevExpress.XtraEditors.ToggleSwitch();
             this.accordionControlElement1 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControlElement2 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
@@ -49,6 +48,7 @@
             this.gaugeControl1 = new DevExpress.XtraGauges.Win.GaugeControl();
             this.digitalGauge1 = new DevExpress.XtraGauges.Win.Gauges.Digital.DigitalGauge();
             this.digitalBackgroundLayerComponent1 = new DevExpress.XtraGauges.Win.Gauges.Digital.DigitalBackgroundLayerComponent();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.fluentDesignFormContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).BeginInit();
@@ -122,11 +122,6 @@
             this.propertyGridControl1.CustomRecordCellEdit += new DevExpress.XtraVerticalGrid.Events.GetCustomRowCellEditEventHandler(this.propertyGridControl1_CustomRecordCellEdit);
             this.propertyGridControl1.ShowingEditor += new System.ComponentModel.CancelEventHandler(this.propertyGridControl1_ShowingEditor);
             // 
-            // serialPort1
-            // 
-            this.serialPort1.ErrorReceived += new System.IO.Ports.SerialErrorReceivedEventHandler(this.serialPort1_ErrorReceived);
-            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
-            // 
             // tcSerialPort
             // 
             this.tcSerialPort.Location = new System.Drawing.Point(156, 83);
@@ -150,6 +145,7 @@
             // accordionControlElement2
             // 
             this.accordionControlElement2.ContentContainer = this.accordionContentContainer1;
+            this.accordionControlElement2.Expanded = true;
             this.accordionControlElement2.HeaderControl = this.tcSerialPort;
             this.accordionControlElement2.HeaderTemplate.AddRange(new DevExpress.XtraBars.Navigation.HeaderElementInfo[] {
             new DevExpress.XtraBars.Navigation.HeaderElementInfo(DevExpress.XtraBars.Navigation.HeaderElementType.Text),
@@ -247,7 +243,7 @@
             this.digitalGauge1.AppearanceOn.ContentBrush = new DevExpress.XtraGauges.Core.Drawing.SolidBrushObject("Color:WhiteSmoke");
             this.digitalGauge1.BackgroundLayers.AddRange(new DevExpress.XtraGauges.Win.Gauges.Digital.DigitalBackgroundLayerComponent[] {
             this.digitalBackgroundLayerComponent1});
-            this.digitalGauge1.Bounds = new System.Drawing.Rectangle(6, 6, 231, 70);
+            this.digitalGauge1.Bounds = new System.Drawing.Rectangle(1, 6, 239, 62);
             this.digitalGauge1.DigitCount = 10;
             this.digitalGauge1.DisplayMode = DevExpress.XtraGauges.Core.Model.DigitalGaugeDisplayMode.Matrix8x14;
             this.digitalGauge1.Name = "digitalGauge1";
@@ -260,6 +256,11 @@
             this.digitalBackgroundLayerComponent1.ShapeType = DevExpress.XtraGauges.Core.Model.DigitalBackgroundShapeSetType.Style7;
             this.digitalBackgroundLayerComponent1.TopLeft = new DevExpress.XtraGauges.Core.Base.PointF2D(20F, 0F);
             this.digitalBackgroundLayerComponent1.ZOrder = 1000;
+            // 
+            // serialPort1
+            // 
+            this.serialPort1.ErrorReceived += new System.IO.Ports.SerialErrorReceivedEventHandler(this.serialPort1_ErrorReceived);
+            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // FrmMain
             // 
@@ -307,7 +308,6 @@
         private DevExpress.XtraEditors.ToggleSwitch tcSerialPort;
         private DevExpress.XtraEditors.SimpleButton simpleButton2;
         private DevExpress.XtraEditors.ButtonEdit buttonEdit1;
-        private System.IO.Ports.SerialPort serialPort1;
         private DevExpress.XtraVerticalGrid.PropertyGridControl propertyGridControl1;
         private DevExpress.XtraEditors.Repository.RepositoryItemComboBox cmbPortNames;
         private DevExpress.XtraBars.Navigation.AccordionContentContainer accordionContentContainer2;
@@ -315,5 +315,6 @@
         private DevExpress.XtraGauges.Win.GaugeControl gaugeControl1;
         private DevExpress.XtraGauges.Win.Gauges.Digital.DigitalGauge digitalGauge1;
         private DevExpress.XtraGauges.Win.Gauges.Digital.DigitalBackgroundLayerComponent digitalBackgroundLayerComponent1;
+        private System.IO.Ports.SerialPort serialPort1;
     }
 }

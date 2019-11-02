@@ -17,6 +17,11 @@ namespace LYMG.Electronics
         public FrmMain()
         {
             InitializeComponent();
+            serialPort1.PortName = Program.Storage.Others.Value<string>("PortName");
+            serialPort1.BaudRate = Program.Storage.Others.Value<int>("BaudRate");
+            serialPort1.Parity = (Parity)Program.Storage.Others.Value<int>("Parity");
+            serialPort1.DataBits = Program.Storage.Others.Value<int>("DataBits");
+            serialPort1.StopBits = (StopBits)Program.Storage.Others.Value<int>("StopBits");
         }
 
         #region 串口开关
@@ -69,7 +74,7 @@ namespace LYMG.Electronics
         #region 收发数据
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            
+
         }
         private void serialPort1_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
@@ -78,5 +83,15 @@ namespace LYMG.Electronics
         }
         #endregion
 
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            Program.Storage.Others["PortName"] = serialPort1.PortName;
+            Program.Storage.Others["BaudRate"] = serialPort1.BaudRate;
+            Program.Storage.Others["Parity"] = (int)serialPort1.Parity;
+            Program.Storage.Others["DataBits"] = serialPort1.DataBits;
+            Program.Storage.Others["StopBits"] = (int)serialPort1.StopBits;
+            serialPort1.Close();
+        }
     }
 }
