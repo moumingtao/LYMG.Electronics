@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LYMG.Electronics", "LYMG.Electronics\LYMG.Electronics.csproj", "{EC11AC02-806D-4E64-9C31-13739B68F5F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{6772818D-4BB1-48B9-995D-1A1B15CDB9B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EC11AC02-806D-4E64-9C31-13739B68F5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC11AC02-806D-4E64-9C31-13739B68F5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC11AC02-806D-4E64-9C31-13739B68F5F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6772818D-4BB1-48B9-995D-1A1B15CDB9B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6772818D-4BB1-48B9-995D-1A1B15CDB9B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6772818D-4BB1-48B9-995D-1A1B15CDB9B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6772818D-4BB1-48B9-995D-1A1B15CDB9B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

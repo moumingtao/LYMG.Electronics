@@ -14,6 +14,7 @@ namespace LYMG.Electronics
     {
         #region 数据
         public static Program Storage { get; private set; }
+        public string SelectedContextType { get; set; }
         [JsonProperty]
         public JObject Others;
         #endregion
