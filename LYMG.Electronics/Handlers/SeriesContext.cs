@@ -50,30 +50,29 @@ namespace LYMG.Electronics
 
             //do
             //{
-                #region 查找帧起始字
-                if (bufferPosition == 0)
+            #region 查找帧起始字
+            if (bufferPosition == 0)
+            {
+                while (true)
                 {
-                    while (true)
-                    {
-                        var b = serialPort.ReadByte();
-                        if (b < 0) return null;// 没找到帧开始字节
-                        if (b == 0x24) break;
-                    }
+                    var b = serialPort.ReadByte();
+                    if (b < 0) return null;// 没找到帧开始字节
+                    if (b == 0x24) break;
                 }
-                #endregion
+            }
+            #endregion
 
-                #region 读取帧后面的内容
-                var needCount = frameSize - bufferPosition;
-                var count = serialPort.Read(buffer, bufferPosition, needCount);
-                if (count < needCount)
-                {
-                    bufferPosition += count;
-                    return null;
-                }
-                bufferPosition = 0;
-                #endregion
-
-            //} while (buffer[frameSize - 1] != frameSize);// 检查帧长度
+            #region 读取帧后面的内容
+            var needCount = frameSize - bufferPosition;
+            var count = serialPort.Read(buffer, bufferPosition, needCount);
+            if (count < needCount)
+            {
+                bufferPosition += count;
+                return null;
+            }
+            bufferPosition = 0;
+            #endregion
+            //} while (buffer[frameSize - 1] != frameSize);// 检查帧长度，模块返回的帧长度有时不对，不检查
 
             #region 读取24位模拟电压
             var input = new CHS24B();

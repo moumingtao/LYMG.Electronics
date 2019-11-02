@@ -146,7 +146,7 @@ namespace LYMG.Electronics
             e.Cancel = true;
             this.FormClosing -= FrmMain_FormClosing;
 
-            await Task.Delay(500);
+            await Task.Delay(1000);
             WriteStorage();
             serialPort1.Close();
             e.Cancel = false;
