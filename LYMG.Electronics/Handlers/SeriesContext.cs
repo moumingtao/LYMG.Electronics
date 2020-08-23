@@ -14,7 +14,11 @@ using View = LYMG.Electronics.Handlers.View;
 
 namespace LYMG.Electronics
 {
-    public abstract class SeriesContext<TData> : ObservableCollection<TData>
+    public interface ISeriesContext
+    {
+        void ReciveData(SerialPort serialPort);
+    }
+    public abstract class SeriesContext<TData> : ObservableCollection<TData>, ISeriesContext
         where TData : SeriesData
     {
         public SeriesContext()
@@ -24,7 +28,6 @@ namespace LYMG.Electronics
             InputEndCH = 8;
             outBuffer[15] = 15;
         }
-        public TData LastFrame;
         protected byte[] buffer = new byte[34];
         int bufferPosition;
         public CHS10B CHS10B;
@@ -39,7 +42,6 @@ namespace LYMG.Electronics
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items, Items.Count - items.Count));
                     return;
                 }
-                LastFrame = data;
                 base.Add(data);
                 items.Add(data);
             }
@@ -142,26 +144,10 @@ namespace LYMG.Electronics
         public int FpsCounter;
         public int LastFps;
         protected abstract TData CreateDataItem(CHS24B input);
-
-        #region Control
-        Control control;
-        public Control Control
-        {
-            get
-            {
-                if (control == null)
-                    control = CreateControl();
-                return control;
-            }
-        }
-        protected abstract Control CreateControl();
-        #endregion
     }
 
     public class SeriesContext : SeriesContext<SeriesData>
     {
-        protected override Control CreateControl() => new View(this);
-
         protected override SeriesData CreateDataItem(CHS24B input)
         {
             var item = new SeriesData();

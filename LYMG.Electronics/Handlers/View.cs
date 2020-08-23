@@ -13,9 +13,14 @@ namespace LYMG.Electronics.Handlers
 {
     public partial class View : DevExpress.XtraEditors.XtraUserControl
     {
-        public View(SeriesContext context)
+        public View()
         {
             InitializeComponent();
+            //chartControl1.DataSource = context;
+        }
+
+        public void SetDataSource(ISeriesContext context)
+        {
             chartControl1.DataSource = context;
         }
     }

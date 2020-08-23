@@ -1,80 +1,67 @@
-﻿using DevExpress.XtraBars;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO.Ports;
-using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.XtraEditors;
+using LYMG.Electronics.Tables;
+using System.IO.Ports;
 
 namespace LYMG.Electronics
 {
-    public partial class FrmMain : DevExpress.XtraBars.FluentDesignSystem.FluentDesignForm
+    public partial class FrmMain : DevExpress.XtraEditors.XtraForm
     {
         public FrmMain()
         {
             InitializeComponent();
-            ReadStorage();
-            InitContextTypes();
+            var maps = new List<MapType>();
+            foreach (var type in this.GetType().Assembly.GetTypes())
+            {
+                if (typeof(ISeriesContext).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+                    maps.Add(new MapType { Type = type });
+            }
+            lookUpEdit1.Properties.DataSource = maps;
         }
 
-        #region 串口开关
-        void ReadStorage()
+        #region 设备开关
+        ISeriesContext SeriesContext;
+        private void 打开设备(object sender, EventArgs e)
         {
-            serialPort1.PortName = Program.Storage.Others.Value<string>("PortName");
-            serialPort1.BaudRate = Program.Storage.Others.Value<int>("BaudRate");
-            serialPort1.Parity = (Parity)Program.Storage.Others.Value<int>("Parity");
-            serialPort1.DataBits = Program.Storage.Others.Value<int>("DataBits");
-            serialPort1.StopBits = (StopBits)Program.Storage.Others.Value<int>("StopBits");
-        }
-        void WriteStorage()
-        {
-            Program.Storage.Others["PortName"] = serialPort1.PortName;
-            Program.Storage.Others["BaudRate"] = serialPort1.BaudRate;
-            Program.Storage.Others["Parity"] = (int)serialPort1.Parity;
-            Program.Storage.Others["DataBits"] = serialPort1.DataBits;
-            Program.Storage.Others["StopBits"] = (int)serialPort1.StopBits;
-        }
-        async void tcSerialPort_Toggled(object sender, EventArgs e)
-        {
-            serialPort1.DataReceived -= serialPort1_DataReceived;// 停止数据的接收
-            if (tcSerialPort.IsOn)
+            if (lookUpEdit1.GetSelectedDataRow() is MapType map)
             {
-                try
-                {
-                    serialPort1.Open();
-                    accordionControlElement2.Text = serialPort1.PortName + "已打开";
-                    accordionControlElement2.Appearance.Normal.ForeColor = Color.Green;
-                    propertyGridControl1.OptionsBehavior.Editable = false;
-                    serialPort1.DataReceived += serialPort1_DataReceived;// 开始数据接收
-                }
-                catch (Exception ex)
-                {
-                    XtraMessageBox.Show(ex.Message);
-                    tcSerialPort.IsOn = false;
-                }
+                SeriesContext = (ISeriesContext)Activator.CreateInstance(map.Type);
+                view1.SetDataSource(SeriesContext);
             }
-            else
+            else return;
+            btnOpenClose.Click -= 打开设备;
+            btnOpenClose.Click += 关闭设备;
+            btnOpenClose.Text = "关闭";
+            try
             {
-                tcSerialPort.Enabled = false;
-                await Task.Delay(500);// 关闭的时候要等一下，等数据停止接收
-                serialPort1.Close();
-                accordionControlElement2.Text = "设备已关闭";
-                accordionControlElement2.Appearance.Normal.ForeColor = Color.Empty;
-                propertyGridControl1.OptionsBehavior.Editable = true;
-                tcSerialPort.Enabled = true;
+                serialPort1.Open();
+                propertyGridControl1.OptionsBehavior.Editable = false;
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show(ex.Message);
             }
         }
-        private void cmbPortNames_ButtonClick(object sender, DevExpress.XtraEditors.Controls.ButtonPressedEventArgs e)
+        private async void 关闭设备(object sender, EventArgs e)
         {
+            btnOpenClose.Click -= 关闭设备;
+            btnOpenClose.Click += 打开设备;
+            btnOpenClose.Text = "启动";
+            await Task.Delay(500);// 关闭的时候要等一下，等数据停止接收
+            serialPort1.Close();
+            propertyGridControl1.OptionsBehavior.Editable = true;
         }
+        #endregion
 
+        #region 设备属性
         private void propertyGridControl1_CustomRecordCellEdit(object sender, DevExpress.XtraVerticalGrid.Events.GetCustomRowCellEditEventArgs e)
         {
             switch (e.Row.Properties.FieldName)
@@ -84,6 +71,7 @@ namespace LYMG.Electronics
                     break;
             }
         }
+
         private void propertyGridControl1_ShowingEditor(object sender, CancelEventArgs e)
         {
             cmbPortNames.Items.Clear();
@@ -92,66 +80,17 @@ namespace LYMG.Electronics
         }
         #endregion
 
-        #region 收发数据
-        void InitContextTypes()
+        #region 接收数据
+        private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            cmbContextTypes.Properties.Items.Add(new SeriesContext());
-            foreach (var item in cmbContextTypes.Properties.Items)
-            {
-                if (item.ToString() == Program.Storage.SelectedContextType)
-                    cmbContextTypes.SelectedItem = item;
-            }
+            SeriesContext?.ReciveData(serialPort1);
         }
-        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            if (cmbContextTypes.EditValue is SeriesContext context)
-                context.ReciveData(serialPort1);
-        }
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if (cmbContextTypes.EditValue is SeriesContext context)
-            {
-                context.LastFps = context.FpsCounter;
-                context.FpsCounter = 0;
-                lblFps.Text = context.LastFps + "sps";
 
-                propertyGridControl2.SelectedObject = context.LastFrame;
-                propertyGridControl2.ExpandAllRows();
-
-                if(serialPort1.IsOpen)
-                    context.SetDevice(serialPort1);
-            }
-        }
-        private void serialPort1_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        private void serialPort1_ErrorReceived(object sender, System.IO.Ports.SerialErrorReceivedEventArgs e)
         {
-            tcSerialPort.IsOn = false;
             XtraMessageBox.Show("接收数据时发生错误：" + e.EventType);
         }
-
-        private void cmbContextTypes_SelectedValueChanged(object sender, EventArgs e)
-        {
-            if (cmbContextTypes.EditValue is SeriesContext context)
-            {
-                fluentDesignFormContainer1.Controls.Clear();
-                context.Control.Dock = DockStyle.Fill;
-                fluentDesignFormContainer1.Controls.Add(context.Control);
-            }
-        }
         #endregion
-
-        async void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Program.Storage.SelectedContextType = cmbContextTypes.Text;
-            serialPort1.DataReceived -= serialPort1_DataReceived;
-            e.Cancel = true;
-            this.FormClosing -= FrmMain_FormClosing;
-
-            await Task.Delay(1000);
-            WriteStorage();
-            serialPort1.Close();
-            e.Cancel = false;
-            this.Close();
-        }
 
     }
 }
