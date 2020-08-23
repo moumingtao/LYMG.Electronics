@@ -9,6 +9,7 @@ namespace LYMG.Electronics
 {
     public class CHS24B
     {
+        public DateTime Time { get; set; }
         public float IN1 { get; set; }
         public float IN2 { get; set; }
         public float IN3 { get; set; }
@@ -20,6 +21,7 @@ namespace LYMG.Electronics
     }
     public class CHS10B
     {
+        public DateTime Time { get; set; }
         public short IO1 { get; set; }
         public short IO2 { get; set; }
         public short IO3 { get; set; }
@@ -30,12 +32,5 @@ namespace LYMG.Electronics
         public short IO8 { get; set; }
 
         internal CHS10B Clone() => (CHS10B)MemberwiseClone();
-    }
-    public class SeriesData
-    {
-        public DateTime Time { get; set; }
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public CHS24B CHS24B { get; set; }
-        public CHS10B CHS10B { get; set; }
     }
 }

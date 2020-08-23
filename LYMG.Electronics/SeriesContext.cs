@@ -1,5 +1,5 @@
 ﻿using DevExpress.XtraCharts;
-using LYMG.Electronics.Handlers;
+using LYMG.Electronics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using View = LYMG.Electronics.Handlers.View;
+using View = LYMG.Electronics.View;
 
 namespace LYMG.Electronics
 {
@@ -18,8 +18,8 @@ namespace LYMG.Electronics
     {
         void ReciveData(SerialPort serialPort);
     }
-    public abstract class SeriesContext<TData> : ObservableCollection<TData>, ISeriesContext
-        where TData : SeriesData
+    public abstract class SeriesContext<TData> : ISeriesContext
+        where TData : CHS24B
     {
         public SeriesContext()
         {
@@ -28,22 +28,23 @@ namespace LYMG.Electronics
             InputEndCH = 8;
             outBuffer[15] = 15;
         }
+        public BindDataSource<TData> DataSource = new BindDataSource<TData>();
+
         protected byte[] buffer = new byte[34];
         int bufferPosition;
         public CHS10B CHS10B;
         public virtual void ReciveData(SerialPort serialPort)
         {
-            List<TData> items = new List<TData>();
             while (true)
             {
                 var data = ReciveOne(serialPort);
                 if (data == null)
                 {
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items, Items.Count - items.Count));
+                    Application.DoEvents();
+                    DataSource.NotifyAdd();
                     return;
                 }
-                base.Add(data);
-                items.Add(data);
+                DataSource.Add(data);
             }
         }
         TData ReciveOne(SerialPort serialPort)
@@ -77,7 +78,8 @@ namespace LYMG.Electronics
             //} while (buffer[frameSize - 1] != frameSize);// 检查帧长度，模块返回的帧长度有时不对，不检查
 
             #region 读取24位模拟电压
-            var input = new CHS24B();
+            var input = CreateDataItem();
+            input.Time = DateTime.Now;
             int readOffset = 0;
             for (int ch = InputStartCH; ch <= InputEndCH; ch++)
             {
@@ -105,7 +107,8 @@ namespace LYMG.Electronics
             #endregion
 
             FpsCounter++;
-            return CreateDataItem(input);
+            InitDataItem(input);
+            return input;
         }
         #region 输出
         byte[] outBuffer = new byte[16];
@@ -143,17 +146,8 @@ namespace LYMG.Electronics
         #endregion
         public int FpsCounter;
         public int LastFps;
-        protected abstract TData CreateDataItem(CHS24B input);
-    }
 
-    public class SeriesContext : SeriesContext<SeriesData>
-    {
-        protected override SeriesData CreateDataItem(CHS24B input)
-        {
-            var item = new SeriesData();
-            item.Time = DateTime.Now;
-            item.CHS24B = input;
-            return item;
-        }
+        protected abstract TData CreateDataItem();
+        protected virtual void InitDataItem(TData data) { }
     }
 }

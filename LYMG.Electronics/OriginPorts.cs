@@ -5,21 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LYMG.Electronics.Tables
+namespace LYMG.Electronics
 {
-    public class CHS24B
-    {
-        [SugarColumn(IsPrimaryKey = true)]
-        public DateTime Time { get; set; }
-        public float IN1 { get; set; }
-        public float IN2 { get; set; }
-        public float IN3 { get; set; }
-        public float IN4 { get; set; }
-        public float IN5 { get; set; }
-        public float IN6 { get; set; }
-        public float IN7 { get; set; }
-        public float IN8 { get; set; }
-    }
     public class HistoryInfo
     {
         [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]

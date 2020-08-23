@@ -46,7 +46,7 @@
             this.dockPanel3 = new DevExpress.XtraBars.Docking.DockPanel();
             this.dockPanel3_Container = new DevExpress.XtraBars.Docking.ControlContainer();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.view1 = new LYMG.Electronics.Handlers.View();
+            this.view1 = new LYMG.Electronics.View();
             ((System.ComponentModel.ISupportInitialize)(this.dockManager1)).BeginInit();
             this.panelContainer2.SuspendLayout();
             this.dockPanel1.SuspendLayout();
@@ -243,7 +243,6 @@
             // serialPort1
             // 
             this.serialPort1.ErrorReceived += new System.IO.Ports.SerialErrorReceivedEventHandler(this.serialPort1_ErrorReceived);
-            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // view1
             // 
@@ -298,6 +297,6 @@
         private DevExpress.XtraVerticalGrid.PropertyGridControl propertyGridControl1;
         private DevExpress.XtraEditors.Repository.RepositoryItemComboBox cmbPortNames;
         private System.IO.Ports.SerialPort serialPort1;
-        private Handlers.View view1;
+        private View view1;
     }
 }

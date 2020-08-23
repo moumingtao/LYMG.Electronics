@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using DevExpress.XtraEditors;
-using LYMG.Electronics.Tables;
 using System.IO.Ports;
 
 namespace LYMG.Electronics
@@ -25,6 +19,8 @@ namespace LYMG.Electronics
                     maps.Add(new MapType { Type = type });
             }
             lookUpEdit1.Properties.DataSource = maps;
+            serialPort1.PortName = "COM5";
+            lookUpEdit1.EditValue = maps[0];
         }
 
         #region 设备开关
@@ -39,6 +35,7 @@ namespace LYMG.Electronics
             else return;
             btnOpenClose.Click -= 打开设备;
             btnOpenClose.Click += 关闭设备;
+            serialPort1.DataReceived += serialPort1_DataReceived;
             btnOpenClose.Text = "关闭";
             try
             {
@@ -55,9 +52,12 @@ namespace LYMG.Electronics
             btnOpenClose.Click -= 关闭设备;
             btnOpenClose.Click += 打开设备;
             btnOpenClose.Text = "启动";
-            await Task.Delay(500);// 关闭的时候要等一下，等数据停止接收
+            serialPort1.DataReceived -= serialPort1_DataReceived;
+            btnOpenClose.Enabled = false;
+            await Task.Delay(1000);// 关闭的时候要等一下，等数据停止接收
             serialPort1.Close();
             propertyGridControl1.OptionsBehavior.Editable = true;
+            btnOpenClose.Enabled = true;
         }
         #endregion
 
@@ -92,5 +92,14 @@ namespace LYMG.Electronics
         }
         #endregion
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.DataReceived -= serialPort1_DataReceived;
+                serialPort1.Close();
+            }
+            base.OnClosing(e);
+        }
     }
 }

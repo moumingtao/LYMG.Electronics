@@ -1,4 +1,4 @@
-﻿namespace LYMG.Electronics.Handlers
+﻿namespace LYMG.Electronics
 {
     partial class View
     {
@@ -245,7 +245,7 @@
             series1.ArgumentDataMember = "Time";
             series1.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.DateTime;
             series1.Name = "Series 1";
-            series1.ValueDataMembersSerializable = "CHS24B.IN1";
+            series1.ValueDataMembersSerializable = "IN1";
             series1.View = swiftPlotSeriesView1;
             this.chartControl1.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
         series1};
